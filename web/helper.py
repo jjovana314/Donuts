@@ -16,31 +16,49 @@ def validate_schema(schema: dict, data: dict) -> None:
                 raise InvalidSchemaError(message, ex_m.INVALID_SCHEMA)
 
 
-list_data = []
-all_keys = ["id", "type", "name", "batters", "topping"]
+data_ids = []
+data_types = []
+data_names = []
 
 
-def generate_data(data: object):
+def _generate_outter_data(data: object) -> None:
+    if isinstance(data, dict):
+        data_ids.append(data["id"])
+        data_types.append(data["type"])
+        data_names.append(data["name"])
+
     if isinstance(data, list):
-        # iterate thru dictionaries
         for dictionary in data:
-            generate_data(dictionary)
-    [id_current, type_current, name, batters, topping] = _geters(data)
-
-    if batters is not None:
-        batter = batters["batter"]
-        for value in batter:
-            generate_data(value)
-    if topping is not None:
-        for value in topping:
-            generate_data(value)
-
-    list_data.append((id_current, type_current, name))
+            _generate_outter_data(dictionary)
 
 
-def _geters(data: dict) -> list:
-    return [data.get(key, None) for key in all_keys]
+def _generate_batter_data(data: list) -> list:
+    values = []
+    for dictionary in data:
+        batter_inner = dictionary["batter"]
+        for inner_dict in batter_inner:
+            values.append(inner_dict["type"])
+    pprint(values)
+    return values
 
 
-with open("data_db.txt", "w") as f:
-    f.write(str(list_data))
+def _generate_topping_data(data: list) -> list:
+    topping_data = []
+    topping_data.append(data["type"])
+    return topping_data
+
+
+def generate_all_data(data):
+    _generate_outter_data(data)
+
+    batter_values = [dictionary["batters"] for dictionary in data]
+    batters = _generate_batter_data(batter_values)
+
+    topping_list = []
+    for dictionary in data:
+        topping = dictionary.get("topping", None)
+        pprint(topping)
+        if topping is not None:
+            # topping is list with dicitonaries
+            for dict_top in topping:
+                topping_list.append(*_generate_topping_data(dict_top))
