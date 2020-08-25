@@ -29,6 +29,7 @@ def _generate_outter_data(data: object) -> None:
 
     if isinstance(data, list):
         for dictionary in data:
+            # recursively call for dictionary
             _generate_outter_data(dictionary)
 
 
@@ -36,16 +37,23 @@ def _generate_batter_data(data: list) -> list:
     values = []
     for dictionary in data:
         batter_inner = dictionary["batter"]
+        # batter_inner is list with dictionaries
         for inner_dict in batter_inner:
             values.append(inner_dict["type"])
-    pprint(values)
+
     return values
 
 
 def _generate_topping_data(data: list) -> list:
-    topping_data = []
-    topping_data.append(data["type"])
-    return topping_data
+    topping_list = []
+    for dictionary in data:
+        topping = dictionary.get("topping", None)
+
+        if topping is not None:
+            # topping is list with dicitonaries
+            for dict_top in topping:
+                topping_list.append(dict_top["type"])
+    return topping_list
 
 
 def generate_all_data(data):
@@ -53,12 +61,4 @@ def generate_all_data(data):
 
     batter_values = [dictionary["batters"] for dictionary in data]
     batters = _generate_batter_data(batter_values)
-
-    topping_list = []
-    for dictionary in data:
-        topping = dictionary.get("topping", None)
-        pprint(topping)
-        if topping is not None:
-            # topping is list with dicitonaries
-            for dict_top in topping:
-                topping_list.append(*_generate_topping_data(dict_top))
+    topping = _generate_topping_data(data)
