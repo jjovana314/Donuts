@@ -25,7 +25,7 @@ class Donuts(Resource):
                 return jsonify({"message": ex.args[0], "code": ex.args[1]})
 
         for dictionary in data:
-            helper.data_getter(dictionary)
+            helper.generate_data(dictionary)
         connection = sqlite3.connect("data.db")
         cursor = connection.cursor()
         create_table = """
