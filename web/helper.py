@@ -25,7 +25,7 @@ def generate_data(data: object):
         # iterate thru dictionaries
         for dictionary in data:
             generate_data(dictionary)
-    [id_current, type_current, name, batters, topping] = geters(data)
+    [id_current, type_current, name, batters, topping] = _geters(data)
     # id, type, name, batter, topping
     # id_current = data.get("id", None)
     # type_current = data.get("type", None)
@@ -45,7 +45,7 @@ def generate_data(data: object):
     list_data.append((id_current, type_current, name))
 
 
-def geters(data: dict) -> list:
+def _geters(data: dict) -> list:
     return [data.get(key, None) for key in all_keys]
     # for key in keys:
     #     list_return.append(data.get(key, None))
