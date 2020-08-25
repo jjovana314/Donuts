@@ -26,13 +26,6 @@ def generate_data(data: object):
         for dictionary in data:
             generate_data(dictionary)
     [id_current, type_current, name, batters, topping] = _geters(data)
-    # id, type, name, batter, topping
-    # id_current = data.get("id", None)
-    # type_current = data.get("type", None)
-    # name = data.get("name", None)
-
-    # batters = data.get("batters", None)
-    # topping = data.get("topping", None)
 
     if batters is not None:
         batter = batters["batter"]
@@ -47,8 +40,7 @@ def generate_data(data: object):
 
 def _geters(data: dict) -> list:
     return [data.get(key, None) for key in all_keys]
-    # for key in keys:
-    #     list_return.append(data.get(key, None))
+
 
 with open("data_db.txt", "w") as f:
     f.write(str(list_data))
