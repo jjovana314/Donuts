@@ -58,6 +58,26 @@ def _generate_topping_data(data: list) -> list:
     return topping_list
 
 
+def _group_data_by_flag(data_batter: list, data_topping: list) -> list:
+    grouped = []
+    i = 0
+    flag = 1
+    for j in range(len(data_batter)):
+        # if flags in data_batter are different then
+        # we moved on to next dictionary
+        if data_batter[j][1] != data_batter[j-1][1] and j > 0:
+            flag += 1
+        for i in range(len(data_topping)):
+            # if flags in data_batter and data_topping are
+            # equal, then we want to group those types together
+            if data_batter[j][1] == data_topping[i][1]:
+                # also don't forget to add flag to tuple
+                # we need that for later in other functions
+                grouped.append((data_batter[j][0], data_topping[i][0], flag))
+
+    return grouped
+
+
 def generate_all_data(data: list) -> tuple:
     _generate_outter_data(data)
 
@@ -65,22 +85,15 @@ def generate_all_data(data: list) -> tuple:
     batters_type = _generate_batter_data(batter_values)
     topping_type = _generate_topping_data(data)
 
-    # tuple_data = ()
-    # list_tuples = []
-    # for id_ in data_ids:
-    #     for type_ in data_types:
-    #         for name in data_names:
-    #             for batter in batters_type:
-    #                 for topping in topping_type:
-    #                     tuple_data = (id_, type_, name, batter, topping)
-    #                     list_tuples.append(tuple_data)
-    # return list_tuples
+    grouped_topping_batter = _group_data_by_flag(batters_type, topping_type)
 
-def group_data_by_flag(data_batter: list, data_topping):
-    grouped = []
-    i = 0
-    while i < len(data_batter) and j < len(data_topping):
-        # check if flags are the same
-        if data_batter[i][1] == data_topping[i][1]:
-            grouped.append([data_batter, data_topping])
-    return grouped
+
+def merge_data(list1: list, list2: list) -> list:
+    # l_return = []
+    # for tuple1 in list1:
+    #     for tuple2 in list2:
+    #         tuple_new = tuple1 + tuple2
+    #         l_return.append(tuple_new)
+    # return l_return
+    
+    
