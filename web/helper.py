@@ -71,7 +71,7 @@ def _group_data_by_flag(data_batter: list, data_topping: list) -> list:
             # if flags in data_batter and data_topping are
             # equal, then we want to group those types together
             if data_batter[j][1] == data_topping[i][1]:
-                if flag > 10:
+                if flag >= 10:
                     grouped.append(data_batter[j][0], data_topping[i][0], "00"+str(flag))
                 # also don't forget to add flag to tuple
                 # we need that for later in other functions
