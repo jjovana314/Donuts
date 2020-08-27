@@ -4,6 +4,9 @@ from exceptions import InvalidSchemaError
 from json import dumps, loads
 import exception_messages as ex_m
 
+# TODO: add comments and doctrings
+# TODO: try to get rid of hardcoded part
+
 
 def validate_schema(schema: dict, data: dict) -> None:
     data = dumps(data)
