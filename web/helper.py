@@ -72,32 +72,62 @@ def _group_data_by_flag(data_batter: list, data_topping: list) -> list:
             # equal, then we want to group those types together
             if data_batter[j][1] == data_topping[i][1]:
                 if flag >= 10:
-                    grouped.append(data_batter[j][0], data_topping[i][0], "00"+str(flag))
+                    grouped.append(
+                        ("00"+str(flag),
+                         data_batter[j][0],
+                         data_topping[i][0],
+                         flag)
+                    )
                 # also don't forget to add flag to tuple
                 # we need that for later in other functions
                 else:
-                    grouped.append((data_batter[j][0], data_topping[i][0], "000"+str(flag)))
+                    grouped.append(
+                        ("000"+str(flag),
+                         data_batter[j][0],
+                         data_topping[i][0],
+                         flag)
+                    )
                 flag = int(flag)
 
     return grouped
 
 
-def generate_all_data(data: list) -> tuple:
+def generate_all_data(data: list) -> list:
     _generate_outter_data(data)
 
     batter_values = [dictionary["batters"] for dictionary in data]
     batters_type = _generate_batter_data(batter_values)
+
     topping_type = _generate_topping_data(data)
 
-    grouped_topping_batter = _group_data_by_flag(batters_type, topping_type)
+    data_grouped = _group_data_by_flag(batters_type, topping_type)
+
+    merged_types = merge_data(data_types, data_grouped)
+    merged_all = merge_data(data_names, merged_types)
+
+    data_final = []
+    for tuple_ in merged_all:
+        tuple_2 = (tuple_[2], tuple_[1], tuple_[0], tuple_[3], tuple_[4])
+        data_final.append(tuple_2)
+    return data_final
 
 
-def merge_data(list1: list, list2: list) -> list:
-    # l_return = []
-    # for tuple1 in list1:
-    #     for tuple2 in list2:
-    #         tuple_new = tuple1 + tuple2
-    #         l_return.append(tuple_new)
-    # return l_return
-    
+def merge_data(outter_data: list, grouped_data: list) -> list:
+    merged = []
+    len_group = len(grouped_data[0])
+    all_flags = [grouped_data[i][len_group-1] 
+                 for i in range(len(grouped_data))]
+    max_flag = max(all_flags)
+
+    for i in range(len(grouped_data)):
+        for j in range(1, max_flag+1):
+            if grouped_data[i][len_group-1] == j:
+                merged.append(
+                    (outter_data[j-1],
+                     grouped_data[i][0],
+                     grouped_data[i][1],
+                     grouped_data[i][2],
+                     grouped_data[i][3])
+                )
+    return merged
     
