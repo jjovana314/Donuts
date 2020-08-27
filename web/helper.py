@@ -109,6 +109,7 @@ def generate_all_data(data: list) -> list:
     merged_all = merge_data(data_names, merged_types)
 
     data_final = []
+    # ! hardcoded
     for tuple_ in merged_all:
         tuple_2 = (tuple_[2], tuple_[1], tuple_[0], tuple_[3], tuple_[4])
         data_final.append(tuple_2)
@@ -125,6 +126,7 @@ def merge_data(outter_data: list, grouped_data: list) -> list:
     for i in range(len(grouped_data)):
         for j in range(1, max_flag+1):
             if grouped_data[i][len_group-1] == j:
+                # ! hardcoded
                 merged.append(
                     (outter_data[j-1],
                      grouped_data[i][0],
