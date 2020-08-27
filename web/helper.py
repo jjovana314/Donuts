@@ -9,6 +9,15 @@ import exception_messages as ex_m
 
 
 def validate_schema(schema: dict, data: dict) -> None:
+    """ Schemma validation.
+
+    Args:
+        schema (dict): valid dictionary
+        data (dict): dictionary for validation
+
+    Raises:
+        InvalidSchemaError: if data (schema) is not valid
+    """
     data = dumps(data)
     try:
         validate(loads(data), schema)
@@ -19,12 +28,18 @@ def validate_schema(schema: dict, data: dict) -> None:
                 raise InvalidSchemaError(message, ex_m.INVALID_SCHEMA)
 
 
+# global lists with outter values
 data_ids = []
 data_types = []
 data_names = []
 
 
 def _generate_outter_data(data: object) -> None:
+    """ Generate data from outter dictionaries.
+
+    Args:
+        data (object): dictionary or list with data
+    """
     if isinstance(data, dict):
         data_ids.append(data["id"])
         data_types.append(data["type"])
@@ -37,6 +52,14 @@ def _generate_outter_data(data: object) -> None:
 
 
 def _generate_batter_data(data: list) -> list:
+    """ Generate data from dictionary with 'betters' key.
+
+    Args:
+        data (list): list with all batter dictionaries
+
+    Returns:
+        list with all batter types
+    """
     values = []
     flag = 0
     for dictionary in data:
@@ -50,6 +73,14 @@ def _generate_batter_data(data: list) -> list:
 
 
 def _generate_topping_data(data: list) -> list:
+    """ Generate data from dictionary with 'topping' key
+
+    Args:
+        data (list): list with all topping dictionaries
+
+    Returns:
+        list with all topping types
+    """
     topping_list = []
     for dictionary in data:
         topping = dictionary.get("topping", None)
@@ -62,6 +93,15 @@ def _generate_topping_data(data: list) -> list:
 
 
 def _group_data_by_flag(data_batter: list, data_topping: list) -> list:
+    """ Grouping data by flags from batter and topping data.
+
+    Args:
+        data_batter (list): list with all batters data and flag
+        data_topping (list): list with all toppings data and flag
+
+    Returns:
+        list with tuples that contains id, batter type, topping type and flag
+    """
     grouped = []
     i = 0
     flag = 1
@@ -96,6 +136,14 @@ def _group_data_by_flag(data_batter: list, data_topping: list) -> list:
 
 
 def generate_all_data(data: list) -> list:
+    """ Generate data that is sent from server.
+
+    Args:
+        data (list): data from server
+
+    Returns:
+        list with tuples that contains id, type, name, batters and toppings data
+    """
     _generate_outter_data(data)
 
     batter_values = [dictionary["batters"] for dictionary in data]
@@ -105,8 +153,8 @@ def generate_all_data(data: list) -> list:
 
     data_grouped = _group_data_by_flag(batters_type, topping_type)
 
-    merged_types = merge_data(data_types, data_grouped)
-    merged_all = merge_data(data_names, merged_types)
+    merged_types = _merge_data(data_types, data_grouped)
+    merged_all = _merge_data(data_names, merged_types)
 
     data_final = []
     # ! hardcoded
@@ -116,7 +164,16 @@ def generate_all_data(data: list) -> list:
     return data_final
 
 
-def merge_data(outter_data: list, grouped_data: list) -> list:
+def _merge_data(outter_data: list, grouped_data: list) -> list:
+    """ Merge outter and grouped data together.
+
+    Args:
+        outter_data (list): list with values from outter dictionaries
+        grouped_data (list): list with all grouped values
+
+    Returns:
+        list with combined grouped and outter data
+    """
     merged = []
     len_group = len(grouped_data[0])
     all_flags = [grouped_data[i][len_group-1] 
