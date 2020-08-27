@@ -24,21 +24,17 @@ class Donuts(Resource):
             except InvalidSchemaError as ex:
                 return jsonify({"message": ex.args[0], "code": ex.args[1]})
 
-        for dictionary in data:
-            helper.generate_data(dictionary)
+        result_data = helper.generate_all_data(data)
         connection = sqlite3.connect("data.db")
         cursor = connection.cursor()
         create_table = """
         CREATE TABLE IF NOT EXISTS donuts (
-            id text, type text, name text
+            id text, type text, name text, batters text, toppings text
         )
         """
         cursor.execute(create_table)
-        insert_query = "INSERT INTO donuts VALUES (?, ?, ?)"
-        cursor.executemany(insert_query, helper.list_data)
-        process = Popen(["python", "helper.py"])
-        process.communicate()[0]
-        process.wait()
+        insert_query = "INSERT INTO donuts VALUES (?, ?, ?, ?, ?)"
+        cursor.executemany(insert_query, result_data)
 
         return jsonify(
             {
