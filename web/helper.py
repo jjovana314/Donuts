@@ -148,7 +148,6 @@ def generate_all_data(data: list) -> list:
 
     batter_values = [dictionary["batters"] for dictionary in data]
     batters_type = _generate_batter_data(batter_values)
-
     topping_type = _generate_topping_data(data)
 
     data_grouped = _group_data_by_flag(batters_type, topping_type)
@@ -162,6 +161,9 @@ def generate_all_data(data: list) -> list:
         tuple_2 = (tuple_[2], tuple_[1], tuple_[0], tuple_[3], tuple_[4])
         data_final.append(tuple_2)
     return data_final
+
+
+call_counter = 0    # count how many times function is called
 
 
 def _merge_data(outter_data: list, grouped_data: list) -> list:
@@ -179,7 +181,6 @@ def _merge_data(outter_data: list, grouped_data: list) -> list:
     merged = []
     len_group = len(grouped_data[0])
 
-    global all_flags
     if call_counter == 1:
         all_flags = [grouped_data[i][len_group-1]
                     for i in range(len(grouped_data))]
@@ -189,12 +190,19 @@ def _merge_data(outter_data: list, grouped_data: list) -> list:
     max_flag = max(all_flags)
 
     def _group_data():
+        """ Group data from outter function.
+
+        Returns:
+            list with mmerged data
+        """
         grouped_inner = [grouped_data[i][k] for k in range(max_flag)]
         merged.append((outter_data[j-1], *grouped_inner))
         return merged
 
     for i in range(len(grouped_data)):
         for j in range(1, max_flag+1):
+            # id_ can be id from grouped_data list
+            # or flag if there is not id in grouped_data
             if call_counter == 1:
                 id_ = grouped_data[i][len_group-1]
             else:
