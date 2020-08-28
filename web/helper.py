@@ -174,22 +174,33 @@ def _merge_data(outter_data: list, grouped_data: list) -> list:
     Returns:
         list with combined grouped and outter data
     """
+    global call_counter
+    call_counter += 1
     merged = []
     len_group = len(grouped_data[0])
-    all_flags = [grouped_data[i][len_group-1] 
-                 for i in range(len(grouped_data))]
+
+    global all_flags
+    if call_counter == 1:
+        all_flags = [grouped_data[i][len_group-1]
+                    for i in range(len(grouped_data))]
+    else:
+        all_flags = [int(tuple_[1]) for tuple_ in grouped_data]
+
     max_flag = max(all_flags)
+
+    def _group_data():
+        grouped_inner = [grouped_data[i][k] for k in range(max_flag)]
+        merged.append((outter_data[j-1], *grouped_inner))
+        return merged
 
     for i in range(len(grouped_data)):
         for j in range(1, max_flag+1):
-            if grouped_data[i][len_group-1] == j:
-                # ! hardcoded
-                merged.append(
-                    (outter_data[j-1],
-                     grouped_data[i][0],
-                     grouped_data[i][1],
-                     grouped_data[i][2],
-                     grouped_data[i][3])
-                )
+            if call_counter == 1:
+                if grouped_data[i][len_group-1] == j:
+                    merged = _group_data()
+            else:
+                if int(grouped_data[i][1]) == j:
+                    merged = _group_data()
+    
     return merged
     
