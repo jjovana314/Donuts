@@ -196,11 +196,11 @@ def _merge_data(outter_data: list, grouped_data: list) -> list:
     for i in range(len(grouped_data)):
         for j in range(1, max_flag+1):
             if call_counter == 1:
-                if grouped_data[i][len_group-1] == j:
-                    merged = _group_data()
+                id_ = grouped_data[i][len_group-1]
             else:
-                if int(grouped_data[i][1]) == j:
-                    merged = _group_data()
+                id_ = int(grouped_data[i][1])
+            if id_ == j:
+                merged = _group_data()
     
     return merged
     
