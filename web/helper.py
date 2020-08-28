@@ -110,7 +110,7 @@ def _group_data_by_flag(data_batter: list, data_topping: list) -> list:
         # we moved on to next dictionary
         if data_batter[j][1] != data_batter[j-1][1] and j > 0:
             flag += 1
-        for i in range(len(data_topping)):        
+        for i in range(len(data_topping)):
             # if flags in data_batter and data_topping are
             # equal, then we want to group those types together
             if data_batter[j][1] == data_topping[i][1]:
