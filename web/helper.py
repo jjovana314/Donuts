@@ -4,7 +4,7 @@ from exceptions import InvalidSchemaError
 from json import dumps, loads
 import exception_messages as ex_m
 
-# TODO: add comments and doctrings
+
 # TODO: try to get rid of hardcoded part
 
 
@@ -116,20 +116,15 @@ def _group_data_by_flag(data_batter: list, data_topping: list) -> list:
             if data_batter[j][1] == data_topping[i][1]:
                 if flag >= 10:
                     grouped.append(
-                        ("00"+str(flag),
-                         data_batter[j][0],
-                         data_topping[i][0],
-                         flag)
+                        ("00"+str(flag), data_batter[j][0], data_topping[i][0], flag)
                     )
                 # also don't forget to add flag to tuple
                 # we need that for later in other functions
                 else:
                     grouped.append(
-                        ("000"+str(flag),
-                         data_batter[j][0],
-                         data_topping[i][0],
-                         flag)
+                        ("000"+str(flag), data_batter[j][0], data_topping[i][0], flag)
                     )
+                # don't forget to convert flag back to int
                 flag = int(flag)
 
     return grouped
@@ -182,9 +177,10 @@ def _merge_data(outter_data: list, grouped_data: list) -> list:
     len_group = len(grouped_data[0])
 
     if call_counter == 1:
-        all_flags = [grouped_data[i][len_group-1]
-                    for i in range(len(grouped_data))]
+        all_flags = [grouped_data[i][len_group-1] for i in range(len(grouped_data))]
     else:
+        # all_flags contains id converted to integer
+        # * example: if id is '0003' then int('0003') is 3 
         all_flags = [int(tuple_[1]) for tuple_ in grouped_data]
 
     max_flag = max(all_flags)
