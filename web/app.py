@@ -9,6 +9,7 @@ import sqlite3
 
 
 # todo: test schema
+# todo: test code
 
 app = Flask(__name__)
 api = Api(app)
