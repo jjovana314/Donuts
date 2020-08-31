@@ -186,14 +186,10 @@ def _merge_data(outter_data: list, grouped_data: list) -> list:
     max_flag = max(all_flags)
 
     def _group_data():
-        """ Group data from outter function.
-
-        Returns:
-            list with mmerged data
-        """
+        """ Group data from outter function. """
+        nonlocal merged
         grouped_inner = [grouped_data[i][k] for k in range(max_flag+1)]
         merged.append((outter_data[j-1], *grouped_inner))
-        return merged
 
     for i in range(len(grouped_data)):
         for j in range(1, max_flag+1):
@@ -204,7 +200,7 @@ def _merge_data(outter_data: list, grouped_data: list) -> list:
             else:
                 id_ = int(grouped_data[i][1])
             if id_ == j:
-                merged = _group_data()
+                _group_data()
     
     return merged
     
