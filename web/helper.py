@@ -191,7 +191,7 @@ def _merge_data(outter_data: list, grouped_data: list) -> list:
         Returns:
             list with mmerged data
         """
-        grouped_inner = [grouped_data[i][k] for k in range(max_flag)]
+        grouped_inner = [grouped_data[i][k] for k in range(max_flag+1)]
         merged.append((outter_data[j-1], *grouped_inner))
         return merged
 
