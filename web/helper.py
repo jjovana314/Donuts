@@ -103,7 +103,6 @@ def _group_data_by_flag(data_batter: list, data_topping: list) -> list:
         list with tuples that contains id, batter type, topping type and flag
     """
     grouped = []
-    i = 0
     flag = 1
     for j in range(len(data_batter)):
         # if flags in data_batter are different then
@@ -203,4 +202,3 @@ def _merge_data(outter_data: list, grouped_data: list) -> list:
                 _group_data()
     
     return merged
-    
