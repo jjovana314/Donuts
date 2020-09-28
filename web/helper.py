@@ -82,13 +82,15 @@ def _generate_topping_data(data: list) -> list:
         list with all topping types
     """
     topping_list = []
+    flag = 0
     for dictionary in data:
         topping = dictionary.get("topping", None)
 
         if topping is not None:
             # topping is list with dicitonaries
+            flag += 1
             for dict_top in topping:
-                topping_list.append(dict_top["type"])
+                topping_list.append((dict_top["type"], flag))
     return topping_list
 
 
@@ -103,10 +105,11 @@ def _group_data_by_flag(data_batter: list, data_topping: list) -> list:
         list with tuples that contains id, batter type, topping type and flag
     """
     grouped = []
+    # i = 0
     flag = 1
     for j in range(len(data_batter)):
         # if flags in data_batter are different then
-        # we moved on to next dictionary
+        # we moved on to the next dictionary
         if data_batter[j][1] != data_batter[j-1][1] and j > 0:
             flag += 1
         for i in range(len(data_topping)):
@@ -174,6 +177,7 @@ def _merge_data(outter_data: list, grouped_data: list) -> list:
     call_counter += 1
     merged = []
     len_group = len(grouped_data[0])
+    global all_flags
 
     if call_counter == 1:
         all_flags = [grouped_data[i][len_group-1] for i in range(len(grouped_data))]
