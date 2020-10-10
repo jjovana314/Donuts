@@ -16,6 +16,7 @@ api = Api(app)
 
 
 class Donuts(Resource):
+    """ Donuts factory class. """
     def post(self):
         # ! data is list
         data = request.get_json()
