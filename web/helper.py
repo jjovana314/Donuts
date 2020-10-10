@@ -87,7 +87,7 @@ def _generate_topping_data(data: list) -> list:
         topping = dictionary.get("topping", None)
 
         if topping is not None:
-            # topping is list with dicitonaries
+            # topping is list with dictionaries
             flag += 1
             for dict_top in topping:
                 topping_list.append((dict_top["type"], flag))
@@ -105,7 +105,6 @@ def _group_data_by_flag(data_batter: list, data_topping: list) -> list:
         list with tuples that contains id, batter type, topping type and flag
     """
     grouped = []
-    # i = 0
     flag = 1
     for j in range(len(data_batter)):
         # if flags in data_batter are different then
