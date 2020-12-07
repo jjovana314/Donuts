@@ -9,4 +9,5 @@ schema_errors = [
     "Failed validating 'maxItems' in schema"
 ]
 
-INVALID_SCHEMA = 451
+INVALID_SCHEMA = 501
+INVALID_DATA = 502
