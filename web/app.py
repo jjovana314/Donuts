@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_restful import Resource, Api
 from schema import schema_donut
-from exceptions import InvalidSchemaError
+from exceptions import InvalidSchemaError, InvalidValue
 from http import HTTPStatus
 from subprocess import Popen
 import helper
@@ -26,7 +26,10 @@ class Donuts(Resource):
             except InvalidSchemaError as ex:
                 return jsonify({"message": ex.args[0], "code": ex.args[1]})
 
-        result_data = helper.generate_all_data(data)
+        try:
+            result_data = helper.generate_all_data(data)
+        except InvalidValue as ex:
+            return jsonify({"message": ex.args[0], "code": ex.args[1]})
         connection = sqlite3.connect("data.db")
         cursor = connection.cursor()
         create_table = """
