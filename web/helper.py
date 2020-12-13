@@ -118,18 +118,34 @@ def _group_data_by_flag(data_batter: list, data_topping: list) -> list:
             if data_batter[j][1] == data_topping[i][1]:
                 if flag >= 10:
                     grouped.append(
-                        ("00"+str(flag), data_batter[j][0], data_topping[i][0], flag)
+                        (_append_to_flag(str(flag)), data_batter[j][0], data_topping[i][0], flag)
                     )
                 # also don't forget to add flag to tuple
                 # we need that for later in other functions
                 else:
                     grouped.append(
-                        ("000"+str(flag), data_batter[j][0], data_topping[i][0], flag)
+                        (_append_to_flag(str(flag), caller_counter=2), data_batter[j][0], data_topping[i][0], flag)
                     )
                 # don't forget to convert flag back to int
                 flag = int(flag)
 
     return grouped
+
+
+def _append_to_flag(flag_str: str, caller_counter=1) -> str:
+    """ Append zeros to flag to make it look like id.
+
+    Args:
+        flag_str (str): flag converted to string
+
+    Kwargs:
+        caller_counter (int): number for multiplication of zeros in string
+
+    Returns:
+        string with flag and zeros concatenated before flag number
+    """
+    zeros_str = "0" * caller_counter
+    return zeros_str + flag_str
 
 
 def generate_all_data(data: list) -> list:
