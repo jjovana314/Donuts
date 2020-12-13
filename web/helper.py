@@ -1,6 +1,6 @@
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
-from exceptions import InvalidSchemaError
+from exceptions import InvalidSchemaError, InvalidValue
 from json import dumps, loads
 import exception_messages as ex_m
 
@@ -105,6 +105,7 @@ def _group_data_by_flag(data_batter: list, data_topping: list) -> list:
         list with tuples that contains id, batter type, topping type and flag
     """
     grouped = []
+    i = 0
     flag = 1
     for j in range(len(data_batter)):
         # if flags in data_batter are different then
@@ -183,7 +184,17 @@ def _merge_data(outter_data: list, grouped_data: list) -> list:
     else:
         # all_flags contains id converted to integer
         # * example: if id is '0003' then int('0003') is 3 
-        all_flags = [int(tuple_[1]) for tuple_ in grouped_data]
+        try:
+            all_flags = [int(tuple_[1]) for tuple_ in grouped_data]
+        except ValueError:
+            try:
+                all_flags = [int(tuple_[0]) for tuple_ in grouped_data]
+            except ValueError:
+                raise InvalidValue(
+                    f"Some value in dictionary data is not valid.",
+                    ex_m.INVALID_DATA,
+                    grouped_data
+                ) from None
 
     max_flag = max(all_flags)
 
@@ -200,7 +211,10 @@ def _merge_data(outter_data: list, grouped_data: list) -> list:
             if call_counter == 1:
                 id_ = grouped_data[i][len_group-1]
             else:
-                id_ = int(grouped_data[i][1])
+                try:
+                    id_ = int(grouped_data[i][1])
+                except ValueError:
+                    id_ = int(grouped_data[i][0])
             if id_ == j:
                 _group_data()
     
