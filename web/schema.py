@@ -28,6 +28,7 @@ schema_donut = {
 								"type": "string", "minLength": 3, "maxLength": 50
 							}
 						},
+                        "required": ["id", "type"],
 						"uniqueItems": True
 					}
 				}
@@ -44,10 +45,12 @@ schema_donut = {
 					"type": {
 						"type": "string", "minLength": 3, "maxLength": 50
 					}
-				}
-			},
-			"uniqueItems": True,
+				},
+                "required": ["id", "type"],
+                "uniqueItems": True,
+			}
 		}
 	},
+    "required": ["id", "type", "name", "ppu", "batters", "topping"],
 	"additionalItems": False
 }
