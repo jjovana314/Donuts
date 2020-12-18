@@ -208,8 +208,7 @@ def _merge_data(outter_data: list, grouped_data: list) -> list:
             except ValueError:
                 raise InvalidValue(
                     f"Some value in dictionary data is not valid.",
-                    ex_m.INVALID_DATA,
-                    grouped_data
+                    ex_m.INVALID_DATA
                 ) from None
 
     max_flag = max(all_flags)
