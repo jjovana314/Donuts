@@ -109,8 +109,8 @@ def _group_data_by_flag(data_batter: list, data_topping: list) -> list:
     idx_topping = 0
     flag = 1
     for idx_batter in range(len(data_batter)):
-        # if flags in data_batter are different then
-        # we moved on to the next dictionary
+        # if flags in data_batter are different 
+        # then we moving on to the next dictionary
         if data_batter[idx_batter][1] != data_batter[idx_batter-1][1] and idx_batter > 0:
             flag += 1
         for idx_topping in range(len(data_topping)):
