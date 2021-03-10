@@ -105,8 +105,8 @@ def _group_data_by_flag(data_batter: list, data_topping: list) -> list:
     Returns:
         list with tuples that contains id, batter type, topping type and flag
     """
-    grouped = []
-    i = 0
+    grouped = []    # list of tuples with id, batter type, topping and flag
+    idx_topping = 0
     flag = 1
     for idx_batter in range(len(data_batter)):
         # if flags in data_batter are different then
@@ -130,7 +130,7 @@ def _group_data_by_flag(data_batter: list, data_topping: list) -> list:
                     grouped.append((
                             _append_to_flag(str(flag), caller_counter=2),
                             data_batter[idx_batter][0],
-                            data_topping[i][0],
+                            data_topping[idx_topping][0],
                             flag)
                     )
                 # don't forget to convert flag back to int
