@@ -6,6 +6,7 @@ import exception_messages as ex_m
 
 
 # TODO: try to get rid of hardcoded part
+# ! repeated code in _generate_batter_data and _generate_topping_data functions
 
 
 def validate_schema(schema: dict, data: dict) -> None:
@@ -107,24 +108,30 @@ def _group_data_by_flag(data_batter: list, data_topping: list) -> list:
     grouped = []
     i = 0
     flag = 1
-    for j in range(len(data_batter)):
+    for idx_batter in range(len(data_batter)):
         # if flags in data_batter are different then
         # we moved on to the next dictionary
-        if data_batter[j][1] != data_batter[j-1][1] and j > 0:
+        if data_batter[idx_batter][1] != data_batter[idx_batter-1][1] and idx_batter > 0:
             flag += 1
-        for i in range(len(data_topping)):
+        for idx_topping in range(len(data_topping)):
             # if flags in data_batter and data_topping are
             # equal, then we want to group those types together
-            if data_batter[j][1] == data_topping[i][1]:
+            if data_batter[idx_batter][1] == data_topping[idx_topping][1]:
                 if flag >= 10:
-                    grouped.append(
-                        (_append_to_flag(str(flag)), data_batter[j][0], data_topping[i][0], flag)
+                    grouped.append((
+                        _append_to_flag(str(flag)),
+                        data_batter[idx_batter][0],
+                        data_topping[idx_topping][0],
+                        flag)
                     )
                 # also don't forget to add flag to tuple
                 # we need that for later in other functions
                 else:
-                    grouped.append(
-                        (_append_to_flag(str(flag), caller_counter=2), data_batter[j][0], data_topping[i][0], flag)
+                    grouped.append((
+                            _append_to_flag(str(flag), caller_counter=2),
+                            data_batter[idx_batter][0],
+                            data_topping[i][0],
+                            flag)
                     )
                 # don't forget to convert flag back to int
                 flag = int(flag)
