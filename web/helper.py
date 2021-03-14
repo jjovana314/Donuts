@@ -95,51 +95,54 @@ def _generate_topping_data(data: list) -> list:
     return topping_list
 
 
-def _group_data_by_flag(data_batter: list, data_topping: list) -> list:
+grouped = []    # list of tuples with id, batter type, topping and flag
+
+
+def _group_data_by_flag(data_batter: list, data_topping: list) -> None:
     """ Grouping data by flags from batter and topping data.
 
     Args:
         data_batter (list): list with all batters data and flag
         data_topping (list): list with all toppings data and flag
-
-    Returns:
-        list with tuples that contains id, batter type, topping type and flag
     """
-    grouped = []    # list of tuples with id, batter type, topping and flag
     idx_topping = 0
     flag = 1
     for idx_batter in range(len(data_batter)):
-        # if flags in data_batter are different 
-        # then we moving on to the next dictionary
-        if data_batter[idx_batter][1] != data_batter[idx_batter-1][1] and idx_batter > 0:
+        if _is_batter_flags_different(data_batter, idx_batter):
+            # move on to the next dictionary
             flag += 1
         for idx_topping in range(len(data_topping)):
-            # if flags in data_batter and data_topping are
-            # equal, then we want to group those types together
-            if data_batter[idx_batter][1] == data_topping[idx_topping][1]:
-                if flag >= 10:
-                    grouped.append((
-                        _append_to_flag(str(flag)),
-                        data_batter[idx_batter][0],
-                        data_topping[idx_topping][0],
-                        flag)
-                    )
-                # also don't forget to add flag to tuple
-                # we need that for later in other functions
-                else:
-                    grouped.append((
-                            _append_to_flag(str(flag), caller_counter=2),
-                            data_batter[idx_batter][0],
-                            data_topping[idx_topping][0],
-                            flag)
-                    )
-                # don't forget to convert flag back to int
+            if _flags_batter_topping_equal(data_batter, idx_batter, data_topping, idx_topping):
+                _append_to_grouped(flag, data_batter, idx_batter, data_topping, idx_topping)
                 flag = int(flag)
 
-    return grouped
+
+def _is_batter_flags_different(data_batter: dict, idx_batter: int) -> bool:
+    return data_batter[idx_batter][1] != data_batter[idx_batter-1][1] and idx_batter > 0
 
 
-def _append_to_flag(flag_str: str, caller_counter=1) -> str:
+def _flags_batter_topping_equal(
+    data_batter: dict, idx_batter: int, data_topping: dict, idx_topping: int
+) -> bool:
+    return data_batter[idx_batter][1] == data_topping[idx_topping][1]
+
+
+def _append_to_grouped(
+    flag: int, data_batter: dict, idx_batter: int, data_topping: dict, idx_topping: int
+) -> None:
+    if flag >= 10:
+        caller_counter = 1
+    else:
+        caller_counter = 2
+    grouped.append((
+        _append_to_flag(str(flag), caller_counter),
+        data_batter[idx_batter][0],
+        data_topping[idx_topping][0],
+        flag)
+    )
+
+
+def _append_to_flag(flag_str: str, caller_counter: int) -> str:
     """ Append zeros to flag to make it look like id.
 
     Args:
@@ -153,6 +156,10 @@ def _append_to_flag(flag_str: str, caller_counter=1) -> str:
     """
     zeros_str = "0" * caller_counter
     return zeros_str + flag_str
+
+
+merged_types = []
+merged_all = []
 
 
 def generate_all_data(data: list) -> list:
@@ -170,10 +177,10 @@ def generate_all_data(data: list) -> list:
     batters_type = _generate_batter_data(batter_values)
     topping_type = _generate_topping_data(data)
 
-    data_grouped = _group_data_by_flag(batters_type, topping_type)
+    _group_data_by_flag(batters_type, topping_type)
 
-    merged_types = _merge_data(data_types, data_grouped)
-    merged_all = _merge_data(data_names, merged_types)
+    merged_types.append(_merge_data(data_types))
+    merged_all.append(_merge_data(data_names))
 
     data_final = []
     # ! hardcoded
@@ -186,7 +193,7 @@ def generate_all_data(data: list) -> list:
 call_counter = 0    # count how many times function is called
 
 
-def _merge_data(outter_data: list, grouped_data: list) -> list:
+def _merge_data(outter_data: list) -> list:
     """ Merge outter and grouped data together.
 
     Args:
@@ -197,47 +204,62 @@ def _merge_data(outter_data: list, grouped_data: list) -> list:
         list with combined grouped and outter data
     """
     global call_counter
+    data = _data_generated_by_counter()
     call_counter += 1
+
     merged = []
-    len_group = len(grouped_data[0])
+    len_group = len(data[0])
     global all_flags
 
     if call_counter == 1:
-        all_flags = [grouped_data[i][len_group-1] for i in range(len(grouped_data))]
+        all_flags = [data[i][len_group-1] for i in range(len(data))]
     else:
         # all_flags contains id converted to integer
         # * example: if id is '0003' then int('0003') is 3 
-        try:
-            all_flags = [int(tuple_[1]) for tuple_ in grouped_data]
-        except ValueError:
-            try:
-                all_flags = [int(tuple_[0]) for tuple_ in grouped_data]
-            except ValueError:
-                raise InvalidValue(
-                    f"Some value in dictionary data is not valid.",
-                    ex_m.INVALID_DATA
-                ) from None
+        all_flags = _define_flags(data)
 
     max_flag = max(all_flags)
 
-    def _group_data():
-        """ Group data from outter function. """
-        nonlocal merged
-        grouped_inner = [grouped_data[i][k] for k in range(max_flag+1)]
-        merged.append((outter_data[j-1], *grouped_inner))
+    for idx_grouped_data in range(len(data)):
+        for flag in range(1, max_flag+1):
+            # id_ can be id from data list
+            # or flag if there is not id in data
+            id_ = _generate_id(data, idx_grouped_data, len_group)
+            if id_ == flag:
+                grouped_inner = [data[idx_grouped_data][k] for k in range(max_flag+1)]
+                merged.append((outter_data[flag-1], *grouped_inner))
 
-    for i in range(len(grouped_data)):
-        for j in range(1, max_flag+1):
-            # id_ can be id from grouped_data list
-            # or flag if there is not id in grouped_data
-            if call_counter == 1:
-                id_ = grouped_data[i][len_group-1]
-            else:
-                try:
-                    id_ = int(grouped_data[i][1])
-                except ValueError:
-                    id_ = int(grouped_data[i][0])
-            if id_ == j:
-                _group_data()
-    
     return merged
+
+
+def _data_generated_by_counter():
+    global grouped
+    global merged_types
+    if call_counter == 0:
+        return grouped
+    else:
+        return merged_types
+
+
+def _define_flags(grouped_data: list) -> list:
+    try:
+        return [int(tuple_[0]) for tuple_ in grouped_data]
+    except ValueError:
+        raise InvalidValue(
+            "Some value in dictionary data is not valid.",
+            ex_m.INVALID_DATA
+        ) from None
+
+
+def _generate_id(grouped_data, idx_grouped_data, len_group):
+    global call_counter
+    if call_counter == 1:
+        return grouped_data[idx_grouped_data][len_group-1]
+    return _id_error_handler(grouped_data, idx_grouped_data)
+
+
+def _id_error_handler(grouped_data, idx_grouped_data):
+    try:
+        return int(grouped_data[idx_grouped_data][1])
+    except ValueError:
+        return int(grouped_data[idx_grouped_data][0])
