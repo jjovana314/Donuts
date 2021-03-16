@@ -211,13 +211,6 @@ def _merge_data(outter_data: list) -> list:
     len_group = len(data[0])
     global all_flags
 
-    if call_counter == 1:
-        all_flags = [data[i][len_group-1] for i in range(len(data))]
-    else:
-        # all_flags contains id converted to integer
-        # * example: if id is '0003' then int('0003') is 3 
-        all_flags = _define_flags(data)
-
     max_flag = max(all_flags)
 
     for idx_grouped_data in range(len(data)):
@@ -227,9 +220,18 @@ def _merge_data(outter_data: list) -> list:
             id_ = _generate_id(data, idx_grouped_data, len_group)
             if id_ == flag:
                 grouped_inner = [data[idx_grouped_data][k] for k in range(max_flag+1)]
-                merged.append((outter_data[flag-1], *grouped_inner))
+                merged.append((data[flag-1], *grouped_inner))
 
     return merged
+
+
+def _check_call_counter(data, len_group) -> list:
+    if call_counter == 1:
+        return [data[i][len_group-1] for i in range(len(data))]
+    else:
+        # all_flags contains id converted to integer
+        # * example: if id is '0003' then int('0003') is 3 
+        return _define_flags(data)
 
 
 def _data_generated_by_counter():
