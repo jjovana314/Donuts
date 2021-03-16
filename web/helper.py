@@ -210,19 +210,24 @@ def _merge_data(outter_data: list) -> list:
     merged = []
     len_group = len(data[0])
     global all_flags
+    all_flags = _check_call_counter(data, len_group)
 
     max_flag = max(all_flags)
 
     for idx_grouped_data in range(len(data)):
         for flag in range(1, max_flag+1):
-            # id_ can be id from data list
-            # or flag if there is not id in data
-            id_ = _generate_id(data, idx_grouped_data, len_group)
-            if id_ == flag:
-                grouped_inner = [data[idx_grouped_data][k] for k in range(max_flag+1)]
-                merged.append((data[flag-1], *grouped_inner))
+            _merged_generator(data, idx_grouped_data, len_group, flag, max_flag, merged)
 
     return merged
+
+
+def _merged_generator(data, idx_grouped_data, len_group, flag, max_flag, merged):
+    # id_ can be id from data list
+    # or flag if there is not id in data
+    id_ = _generate_id(data, idx_grouped_data, len_group)
+    if id_ == flag:
+        grouped_inner = [data[idx_grouped_data][k] for k in range(max_flag+1)]
+        merged.append((data[flag-1], *grouped_inner))
 
 
 def _check_call_counter(data, len_group) -> list:
