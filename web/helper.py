@@ -52,47 +52,17 @@ def _generate_outter_data(data: object) -> None:
             _generate_outter_data(dictionary)
 
 
-def _generate_batter_data(data: list) -> list:
-    """ Generate data from dictionary with 'betters' key.
-
-    Args:
-        data (list): list with all batter dictionaries
-
-    Returns:
-        list with all batter types
-    """
+def _generate_data_batter_topping(server_data: list, type_: str) -> list:
     types = []
     flag = 0
-    for dictionary in data:
-        batter_inner = dictionary["batter"]
+    if type_ != "topping" and type_ != "batter":
+        raise InvalidValue("Donut can have only batter or topping")
+    for dictionary in server_data:
+        inner_topping_or_batter = dictionary[type_]
         flag += 1
-        # batter_inner is list with dictionaries
-        for inner_dict in batter_inner:
+        for inner_dict in inner_topping_or_batter:
             types.append((inner_dict["type"], flag))
-
     return types
-
-
-def _generate_topping_data(data: list) -> list:
-    """ Generate data from dictionary with 'topping' key
-
-    Args:
-        data (list): list with all topping dictionaries
-
-    Returns:
-        list with all topping types
-    """
-    topping_list = []
-    flag = 0
-    for dictionary in data:
-        topping = dictionary.get("topping", None)
-
-        if topping is not None:
-            # topping is list with dictionaries
-            flag += 1
-            for dict_top in topping:
-                topping_list.append((dict_top["type"], flag))
-    return topping_list
 
 
 grouped = []    # list of tuples with id, batter type, topping and flag
@@ -171,11 +141,11 @@ def generate_all_data(server_data: list) -> list:
     Returns:
         list with tuples that contains id, type, name, batters and toppings data
     """
+    batter_values = [dictionary["batters"] for dictionary in server_data]
     _generate_outter_data(server_data)
 
-    batter_values = [dictionary["batters"] for dictionary in server_data]
-    batters_type = _generate_batter_data(batter_values)
-    topping_type = _generate_topping_data(server_data)
+    batters_type = _generate_data_batter_topping(batter_values, "batter")
+    topping_type = _generate_data_batter_topping(server_data, "topping")
 
     _group_data_by_flag(batters_type, topping_type)
 
