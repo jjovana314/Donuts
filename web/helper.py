@@ -61,16 +61,16 @@ def _generate_batter_data(data: list) -> list:
     Returns:
         list with all batter types
     """
-    values = []
+    types = []
     flag = 0
     for dictionary in data:
         batter_inner = dictionary["batter"]
         flag += 1
         # batter_inner is list with dictionaries
         for inner_dict in batter_inner:
-            values.append((inner_dict["type"], flag))
+            types.append((inner_dict["type"], flag))
 
-    return values
+    return types
 
 
 def _generate_topping_data(data: list) -> list:
