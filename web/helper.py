@@ -162,25 +162,25 @@ merged_types = []
 merged_all = []
 
 
-def generate_all_data(data: list) -> list:
+def generate_all_data(server_data: list) -> list:
     """ Generate data that is sent from server.
 
     Args:
-        data (list): data from server
+        server_data (list): data from server
 
     Returns:
         list with tuples that contains id, type, name, batters and toppings data
     """
-    _generate_outter_data(data)
+    _generate_outter_data(server_data)
 
-    batter_values = [dictionary["batters"] for dictionary in data]
+    batter_values = [dictionary["batters"] for dictionary in server_data]
     batters_type = _generate_batter_data(batter_values)
-    topping_type = _generate_topping_data(data)
+    topping_type = _generate_topping_data(server_data)
 
     _group_data_by_flag(batters_type, topping_type)
 
-    merged_types.append(_merge_data(data_types))
-    merged_all.append(_merge_data(data_names))
+    merged_types = _merge_data(data_types)
+    merged_all = _merge_data(data_names)
 
     data_final = []
     # ! hardcoded
@@ -203,13 +203,12 @@ def _merge_data(outter_data: list) -> list:
     Returns:
         list with combined grouped and outter data
     """
-    global call_counter
     data = _data_generated_by_counter()
+    global call_counter
     call_counter += 1
 
     merged = []
     len_group = len(data[0])
-    global all_flags
     all_flags = _check_call_counter(data, len_group)
 
     max_flag = max(all_flags)
@@ -221,7 +220,9 @@ def _merge_data(outter_data: list) -> list:
     return merged
 
 
-def _merged_generator(data, idx_grouped_data, len_group, flag, max_flag, merged):
+def _merged_generator(
+    data: list, idx_grouped_data: int, len_group: int, flag: int, max_flag: int, merged: list
+) -> None:
     # id_ can be id from data list
     # or flag if there is not id in data
     id_ = _generate_id(data, idx_grouped_data, len_group)
@@ -230,7 +231,7 @@ def _merged_generator(data, idx_grouped_data, len_group, flag, max_flag, merged)
         merged.append((data[flag-1], *grouped_inner))
 
 
-def _check_call_counter(data, len_group) -> list:
+def _check_call_counter(data: list, len_group: int) -> list:
     if call_counter == 1:
         return [data[i][len_group-1] for i in range(len(data))]
     else:
@@ -239,7 +240,7 @@ def _check_call_counter(data, len_group) -> list:
         return _define_flags(data)
 
 
-def _data_generated_by_counter():
+def _data_generated_by_counter() -> list:
     global grouped
     global merged_types
     if call_counter == 0:
@@ -258,14 +259,14 @@ def _define_flags(grouped_data: list) -> list:
         ) from None
 
 
-def _generate_id(grouped_data, idx_grouped_data, len_group):
+def _generate_id(grouped_data: list, idx_grouped_data: int, len_group: int) -> int:
     global call_counter
     if call_counter == 1:
         return grouped_data[idx_grouped_data][len_group-1]
     return _id_error_handler(grouped_data, idx_grouped_data)
 
 
-def _id_error_handler(grouped_data, idx_grouped_data):
+def _id_error_handler(grouped_data, idx_grouped_data) -> int:
     try:
         return int(grouped_data[idx_grouped_data][1])
     except ValueError:
